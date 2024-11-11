@@ -10,7 +10,7 @@ import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon } from '@mui/icons-mat
 import Sidebar from './Sidebar';
 import Header from './Header';
 
-const sidebarWidth = 280;
+const sidebarWidth = 50;
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);

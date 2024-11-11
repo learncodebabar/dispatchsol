@@ -15,7 +15,7 @@ const Header = () => {
           startAdornment={<SearchIcon />}
           sx={{ backgroundColor: 'white', padding: '0 10px', borderRadius: '4px', marginRight: 2 }}
         />
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="success">
           Create New Customer
         </Button>
       </Toolbar>
