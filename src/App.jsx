@@ -1,11 +1,12 @@
 
 import './App.css'
+import Dashboard from './components/Dashboard'
 
 function App() {
 
   return (
     <>
-      <h1>DisPatch and Solutions</h1>
+     <Dashboard />
     </>
   )
 }
