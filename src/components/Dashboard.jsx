@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Drawer,
   AppBar,
   Toolbar,
   IconButton,
@@ -10,20 +9,29 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import Content from "./Content"; // Your main content component
+import Content from "./Content"; // Main content with table
 
 const drawerWidth = 240;
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false); // State to manage form visibility
 
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleOpenForm = () => {
+    setIsFormOpen(true); // Open the customer form modal
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false); // Close the customer form modal
+  };
+
   return (
     <Router>
-      <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      <Box sx={{ display: "flex", height: "100vh" }}>
         <AppBar
           position="fixed"
           sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
@@ -32,7 +40,7 @@ const Dashboard = () => {
             <IconButton
               color="inherit"
               edge="start"
-              onClick={handleSidebarToggle}
+              onClick={handleSidebarToggle} // Toggle sidebar when clicked
               sx={{ mr: 2 }}
             >
               <MenuIcon />
@@ -41,13 +49,13 @@ const Dashboard = () => {
               Dashboard
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
-            <Button color="inherit" variant="outlined">
+            <Button color="inherit" variant="outlined" onClick={handleOpenForm}>
               Create New Customer
             </Button>
           </Toolbar>
         </AppBar>
 
-        {/* Sidebar Drawer (Mobile - temporary) */}
+        {/* Sidebar with Navigation Links */}
         <Drawer
           variant="temporary"
           open={isSidebarOpen}
@@ -57,7 +65,6 @@ const Dashboard = () => {
               width: drawerWidth,
               boxSizing: "border-box",
             },
-            display: { xs: "block", sm: "none" }, // Show on mobile only
           }}
         >
           <Box p={2} role="presentation">
@@ -81,28 +88,6 @@ const Dashboard = () => {
           </Box>
         </Drawer>
 
-        {/* Sidebar Drawer (Large Screens - permanent) */}
-        <Drawer
-          variant="permanent"
-          sx={{
-            "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              boxSizing: "border-box",
-            },
-            display: { xs: "none", sm: "block" }, // Hide on mobile
-          }}
-        >
-          <Box p={2} role="presentation">
-            <Typography variant="h6">Navigation</Typography>
-            <Button component={Link} to="/" sx={{ display: "block", mt: 2 }}>
-              Home
-            </Button>
-            <Button component={Link} to="/customers" sx={{ display: "block" }}>
-              Customers
-            </Button>
-          </Box>
-        </Drawer>
-
         {/* Main Content */}
         <Box
           component="main"
@@ -110,11 +95,7 @@ const Dashboard = () => {
             flexGrow: 1,
             p: 3,
             transition: "margin-left 0.3s",
-            marginLeft: isSidebarOpen ? 0 : 0, // No content toggle, always use full width
-            width: "100%",
-            height: "100vh",
-            overflow: "auto",
-            maxWidth: "100%",
+            marginLeft: isSidebarOpen ? 0 : -drawerWidth,
           }}
         >
           <Toolbar />
@@ -123,6 +104,9 @@ const Dashboard = () => {
             <Route path="/customers" element={<Content />} />
           </Routes>
         </Box>
+
+        {/* Customer Form Modal */}
+        <CustomerForm open={isFormOpen} handleClose={handleCloseForm} />
       </Box>
     </Router>
   );
