@@ -1,8 +1,18 @@
 // Customers.js
 import React from 'react';
 
-const Customers = () => {
-  return <div>Customers Page Content</div>;
-};
 
-export default Customers;
+const Custumers = ()=>{
+   return(<>
+   
+    <h1>Hello World</h1>
+    <h1>Hello World</h1>
+    <h1>Hello World</h1>
+    <h1>Hello World</h1>
+    <h1>Hello World</h1>
+   
+   </>)
+}
+
+
+export default Custumers
