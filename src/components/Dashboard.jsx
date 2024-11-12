@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, AppBar, Toolbar, IconButton, Typography, Button } from "@mui/material";
+import {
+  Box,
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Button,
+} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Content from "./Content"; // Your main content component
@@ -52,7 +59,10 @@ const Dashboard = () => {
         </AppBar>
 
         {/* Sidebar Component */}
-        <Sidebar isSidebarOpen={isSidebarOpen} handleSidebarToggle={handleSidebarToggle} />
+        <Sidebar
+          isSidebarOpen={isSidebarOpen}
+          handleSidebarToggle={handleSidebarToggle}
+        />
 
         {/* Main Content */}
         <Box
