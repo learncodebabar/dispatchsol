@@ -1,3 +1,4 @@
+// Dashboard.js
 import React, { useState } from "react";
 import {
   Box,
@@ -13,41 +14,39 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Content from "./Content"; // Your main content component
+import Content from "./Content"; // Main content component
 import Sidebar from "./Sidebar"; // Sidebar Component
-import CustomerForm from "./custumers/CustomerForm"; // New customer form component
+import CustomerForm from "./custumers/CustomerForm"; // Customer form component
+import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark mode icon
+import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light mode icon
 
-const Dashboard = () => {
+const Dashboard = ({ darkMode, toggleTheme }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isFormOpen, setIsFormOpen] = useState(false); // State to manage form visibility
-  const [isCreatingNewCustomer, setIsCreatingNewCustomer] = useState(false); // State for creating a new customer
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isCreatingNewCustomer, setIsCreatingNewCustomer] = useState(false);
 
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
   const handleOpenForm = () => {
-    setIsCreatingNewCustomer(true); // Set to true when creating a new customer
-    setIsFormOpen(true); // Open the customer form modal
+    setIsCreatingNewCustomer(true);
+    setIsFormOpen(true);
   };
 
   const handleCloseForm = () => {
-    setIsFormOpen(false); // Close the customer form modal
+    setIsFormOpen(false);
   };
 
   return (
     <Router>
       <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-        {/* AppBar (Navbar) */}
-        <AppBar
-          position="fixed"
-          sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        >
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
           <Toolbar>
             <IconButton
               color="inherit"
               edge="start"
-              onClick={handleSidebarToggle} // Toggle sidebar when clicked
+              onClick={handleSidebarToggle}
               sx={{ mr: 2 }}
             >
               <MenuIcon />
@@ -56,26 +55,23 @@ const Dashboard = () => {
               Dashboard
             </Typography>
             <Box sx={{ flexGrow: 1 }} />
+            <IconButton onClick={toggleTheme} color="inherit">
+              {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
             <Button color="inherit" variant="outlined" onClick={handleOpenForm}>
               Create New Customer
             </Button>
           </Toolbar>
         </AppBar>
 
-        {/* Sidebar Component */}
-        <Sidebar
-          isSidebarOpen={isSidebarOpen}
-          handleSidebarToggle={handleSidebarToggle}
-        />
+        <Sidebar isSidebarOpen={isSidebarOpen} handleSidebarToggle={handleSidebarToggle} />
 
-        {/* Main Content */}
         <Box
           component="main"
           sx={{
             flexGrow: 1,
             p: 3,
             transition: "margin-left 0.1s",
-            marginLeft: isSidebarOpen ? 0 : 0, // When sidebar is hidden on mobile, content takes full width
             width: "100%",
             height: "100vh",
             overflow: "auto",
@@ -89,29 +85,16 @@ const Dashboard = () => {
           </Routes>
         </Box>
 
-        {/* Customer Form Modal */}
-        <Dialog
-          open={isFormOpen}
-          onClose={handleCloseForm}
-          fullWidth
-          maxWidth="md" // Optional: Can adjust based on how wide you want the dialog
-        >
+        <Dialog open={isFormOpen} onClose={handleCloseForm} fullWidth maxWidth="md">
           <DialogTitle>{isCreatingNewCustomer ? "Create New Customer" : "Edit Customer"}</DialogTitle>
           <DialogContent>
-            {/* Pass the isCreatingNewCustomer prop to CustomerForm */}
-            <CustomerForm
-              handleClose={handleCloseForm}
-              isCreatingNewCustomer={isCreatingNewCustomer} // Passing the state here
-            />
+            <CustomerForm handleClose={handleCloseForm} isCreatingNewCustomer={isCreatingNewCustomer} />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseForm} color="primary">
               Cancel
             </Button>
-            <Button
-              onClick={handleCloseForm} // Assuming handleSubmit is handled in CustomerForm
-              color="primary"
-            >
+            <Button onClick={handleCloseForm} color="primary">
               Submit
             </Button>
           </DialogActions>
