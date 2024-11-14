@@ -20,6 +20,14 @@ const CustomerForm = ({ open, handleClose }) => {
     fax: "",
     email: "",
     extraInfo: "",
+    currency: "",
+    customer: false,
+    location: false,
+    CSA: false,
+    currencyType: "",
+    terms: "",
+    notes: "",
+    website: "",
   });
 
   const handleChange = (e) => {
@@ -42,8 +50,7 @@ const CustomerForm = ({ open, handleClose }) => {
       <DialogTitle>Create New Customer</DialogTitle>
       <DialogContent>
         <Box sx={{ padding: "20px" }}>
-          <Grid container spacing={2}>
-            {/* Each input field with a three-column layout on large screens, single column on small screens */}
+          <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
               <TextField
                 label="Ref ID"
@@ -120,6 +127,46 @@ const CustomerForm = ({ open, handleClose }) => {
                 variant="outlined"
                 name="extraInfo"
                 value={customerData.extraInfo}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Currency"
+                variant="outlined"
+                name="currency"
+                value={customerData.currency}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Terms"
+                variant="outlined"
+                name="terms"
+                value={customerData.terms}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Notes"
+                variant="outlined"
+                name="notes"
+                value={customerData.notes}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Website"
+                variant="outlined"
+                name="website"
+                value={customerData.website}
                 onChange={handleChange}
                 fullWidth
               />

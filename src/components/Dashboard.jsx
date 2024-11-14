@@ -6,24 +6,28 @@ import {
   IconButton,
   Typography,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Content from "./Content"; // Your main content component
 import Sidebar from "./Sidebar"; // Sidebar Component
-import CustomerForm from "./CustomerForm"; // New customer form component
-
-const drawerWidth = 240;
+import CustomerForm from "./custumers/CustomerForm"; // New customer form component
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false); // State to manage form visibility
+  const [isCreatingNewCustomer, setIsCreatingNewCustomer] = useState(false); // State for creating a new customer
 
   const handleSidebarToggle = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
   const handleOpenForm = () => {
+    setIsCreatingNewCustomer(true); // Set to true when creating a new customer
     setIsFormOpen(true); // Open the customer form modal
   };
 
@@ -70,7 +74,7 @@ const Dashboard = () => {
           sx={{
             flexGrow: 1,
             p: 3,
-            transition: "margin-left 0.3s",
+            transition: "margin-left 0.1s",
             marginLeft: isSidebarOpen ? 0 : 0, // When sidebar is hidden on mobile, content takes full width
             width: "100%",
             height: "100vh",
@@ -86,7 +90,32 @@ const Dashboard = () => {
         </Box>
 
         {/* Customer Form Modal */}
-        <CustomerForm open={isFormOpen} handleClose={handleCloseForm} />
+        <Dialog
+          open={isFormOpen}
+          onClose={handleCloseForm}
+          fullWidth
+          maxWidth="md" // Optional: Can adjust based on how wide you want the dialog
+        >
+          <DialogTitle>{isCreatingNewCustomer ? "Create New Customer" : "Edit Customer"}</DialogTitle>
+          <DialogContent>
+            {/* Pass the isCreatingNewCustomer prop to CustomerForm */}
+            <CustomerForm
+              handleClose={handleCloseForm}
+              isCreatingNewCustomer={isCreatingNewCustomer} // Passing the state here
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseForm} color="primary">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCloseForm} // Assuming handleSubmit is handled in CustomerForm
+              color="primary"
+            >
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Router>
   );

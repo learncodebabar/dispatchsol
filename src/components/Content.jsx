@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   Table,
@@ -9,16 +10,9 @@ import {
   Paper,
   IconButton,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  Button,
-  Tabs,
-  Tab,
-  Box,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import EditCustomerForm from "./custumers/EditCustomerForm"; // Import the EditCustomerForm component
 
 const dummyData = [
   {
@@ -41,14 +35,12 @@ const dummyData = [
     email: "janesmith@example.com",
     extraInfo: "Wholesale",
   },
-  // Additional dummy rows
 ];
 
 const Content = () => {
   const [data, setData] = useState(dummyData);
   const [open, setOpen] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
-  const [tabIndex, setTabIndex] = useState(0);
 
   const handleEditClick = (row) => {
     setCurrentRow(row);
@@ -60,71 +52,20 @@ const Content = () => {
     setCurrentRow(null);
   };
 
-  const handleTabChange = (event, newIndex) => {
-    setTabIndex(newIndex);
-  };
-
-  const handleChange = (e) => {
-    setCurrentRow({ ...currentRow, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = () => {
-    setData(
-      data.map((row) => (row.refInfo === currentRow.refInfo ? currentRow : row))
-    );
-    handleClose();
-  };
-
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell
-              style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
-            >
-              REF INFO
-            </TableCell>
-            <TableCell
-              style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
-            >
-              NAME
-            </TableCell>
-            <TableCell
-              style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
-            >
-              TYPE
-            </TableCell>
-            <TableCell
-              style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
-            >
-              ADDRESS
-            </TableCell>
-            <TableCell
-              style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
-            >
-              PHONE
-            </TableCell>
-            <TableCell
-              style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
-            >
-              FAX
-            </TableCell>
-            <TableCell
-              style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
-            >
-              EMAIL
-            </TableCell>
-            <TableCell
-              style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
-            >
-              EXTRA INFO
-            </TableCell>
-            <TableCell
-              style={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
-            >
-              ACTIONS
-            </TableCell>
+            <TableCell>REF INFO</TableCell>
+            <TableCell>NAME</TableCell>
+            <TableCell>TYPE</TableCell>
+            <TableCell>ADDRESS</TableCell>
+            <TableCell>PHONE</TableCell>
+            <TableCell>FAX</TableCell>
+            <TableCell>EMAIL</TableCell>
+            <TableCell>EXTRA INFO</TableCell>
+            <TableCell>ACTIONS</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -155,106 +96,13 @@ const Content = () => {
       </Table>
 
       {/* Edit Dialog */}
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle>Edit Customer</DialogTitle>
-        <DialogContent>
-          <Tabs
-            value={tabIndex}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="fullWidth"
-          >
-            <Tab label="Personal Info" />
-            <Tab label="Contact Details" />
-            <Tab label="Additional Info" />
-          </Tabs>
-          <Box mt={2}>
-            {tabIndex === 0 && (
-              <>
-                <TextField
-                  label="Name"
-                  name="name"
-                  fullWidth
-                  variant="outlined"
-                  margin="dense"
-                  value={currentRow?.name || ""}
-                  onChange={handleChange}
-                />
-                <TextField
-                  label="Type"
-                  name="type"
-                  fullWidth
-                  variant="outlined"
-                  margin="dense"
-                  value={currentRow?.type || ""}
-                  onChange={handleChange}
-                />
-              </>
-            )}
-            {tabIndex === 1 && (
-              <>
-                <TextField
-                  label="Address"
-                  name="address"
-                  fullWidth
-                  variant="outlined"
-                  margin="dense"
-                  value={currentRow?.address || ""}
-                  onChange={handleChange}
-                />
-                <TextField
-                  label="Phone"
-                  name="phone"
-                  fullWidth
-                  variant="outlined"
-                  margin="dense"
-                  value={currentRow?.phone || ""}
-                  onChange={handleChange}
-                />
-                <TextField
-                  label="Fax"
-                  name="fax"
-                  fullWidth
-                  variant="outlined"
-                  margin="dense"
-                  value={currentRow?.fax || ""}
-                  onChange={handleChange}
-                />
-              </>
-            )}
-            {tabIndex === 2 && (
-              <>
-                <TextField
-                  label="Email"
-                  name="email"
-                  fullWidth
-                  variant="outlined"
-                  margin="dense"
-                  value={currentRow?.email || ""}
-                  onChange={handleChange}
-                />
-                <TextField
-                  label="Extra Info"
-                  name="extraInfo"
-                  fullWidth
-                  variant="outlined"
-                  margin="dense"
-                  value={currentRow?.extraInfo || ""}
-                  onChange={handleChange}
-                />
-              </>
-            )}
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} color="primary">
-            Save
-          </Button>
-        </DialogActions>
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+        <EditCustomerForm
+          customerData={currentRow}
+          onClose={handleClose}
+          setData={setData}
+          data={data}
+        />
       </Dialog>
     </TableContainer>
   );

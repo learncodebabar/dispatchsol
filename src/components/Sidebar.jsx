@@ -1,73 +1,47 @@
-import React from "react";
-import { Box, Button, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
-import Custumers from "./Customers";
+import React, { useState } from 'react';
+import { Box, Button, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 
-const Sidebar = ({ isSidebarOpen, handleSidebarToggle }) => {
+const Sidebar = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+
+    setIsSidebarOpen(open);
+  };
+
+  const list = () => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
+    >
+      <List>
+        {['Dashboard', 'Customers', 'Products'].map((item, index) => (
+          <ListItem key={index} disablePadding>
+            <ListItemButton>
+              <ListItemText primary={item} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   return (
-    <>
-      {/* Sidebar Drawer for Mobile */}
-      <Box
-        component="nav"
-        sx={{
-          display: { xs: "block", sm: "none" }, // Show on mobile only
-        }}
+    <div>
+      <Button onClick={toggleDrawer(true)}>Toggle Sidebar</Button>
+      <Drawer
+        anchor="left"
+        open={isSidebarOpen}
+        onClose={toggleDrawer(false)}
       >
-        <Box
-          p={2}
-          role="presentation"
-          sx={{
-            width: 240,
-            backgroundColor: "#f4f4f4",
-            height: "100%",
-          }}
-        >
-          <Typography variant="h6">Navigation</Typography>
-          <Button
-            component={Link}
-            to="/"
-            onClick={handleSidebarToggle}
-            sx={{ display: "block", mt: 2 }}
-          >
-            Home
-          </Button>
-          <Button
-            component={Custumers}
-            to="/customers"
-            onClick={handleSidebarToggle}
-            sx={{ display: "block" }}
-          >
-            Customers
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Sidebar Drawer for Desktop (Permanent) */}
-      <Box
-        component="nav"
-        sx={{
-          display: { xs: "none", sm: "block" }, // Hide on mobile
-        }}
-      >
-        <Box
-          p={2}
-          role="presentation"
-          sx={{
-            width: 240,
-            backgroundColor: "#f4f4f4",
-            height: "100%",
-          }}
-        >
-          <Typography variant="h6">Navigation</Typography>
-          <Button component={Link} to="/" sx={{ display: "block", mt: 2 }}>
-            Home
-          </Button>
-          <Button component={Link} to="/customers" sx={{ display: "block" }}>
-            Customers
-          </Button>
-        </Box>
-      </Box>
-    </>
+        {list()}
+      </Drawer>
+    </div>
   );
 };
 
