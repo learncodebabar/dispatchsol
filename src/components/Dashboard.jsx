@@ -16,7 +16,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Content from "./Content"; // Main content component
 import Sidebar from "./Sidebar"; // Sidebar Component
-import CustomerForm from "./custumers/CustomerForm"; // Customer form component
+import AddCustomerForm from "./CustomerForm"; // Customer form component
 import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark mode icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light mode icon
 
@@ -88,7 +88,7 @@ const Dashboard = ({ darkMode, toggleTheme }) => {
         <Dialog open={isFormOpen} onClose={handleCloseForm} fullWidth maxWidth="md">
           <DialogTitle>{isCreatingNewCustomer ? "Create New Customer" : "Edit Customer"}</DialogTitle>
           <DialogContent>
-            <CustomerForm handleClose={handleCloseForm} isCreatingNewCustomer={isCreatingNewCustomer} />
+            <AddCustomerForm handleClose={handleCloseForm} isCreatingNewCustomer={isCreatingNewCustomer} />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseForm} color="primary">

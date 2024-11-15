@@ -1,70 +1,247 @@
-import React, { useState, useEffect } from "react";
-import { Box, Tabs, Tab, Button } from "@mui/material";
-import PrimaryInfo from "./PrimaryInfo";
-import CustomerInformation from "./CustomerInformation";
-import ManageContacts from "./ManageContacts";
-import CheckboxSubmit from "./CheckboxSubmit"; // Import the Checkbox component
+import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+} from "@mui/material";
 
-const CustomerForm = ({ handleClose, isCreatingNewCustomer }) => {
-  const [tabIndex, setTabIndex] = useState(0);
-  const [formData, setFormData] = useState({
+const CustomerForm = ({ open, handleClose }) => {
+  const [primaryInfo, setPrimaryInfo] = useState({
+    customer: false,
+    location: false,
+    carrier: false,
+    leader: false,
     customerName: "",
-    address: "",
+    address1: "",
+    address2: "",
     country: "",
+    province: "",
     city: "",
+    postalCode: "",
+    legalName: "",
+    website: "",
+    tollFree: "",
+    phone: "",
+    ext: "",
+    email: "",
+    fax: ""
+  });
+
+  // Options Accordion
+  const [options, setOptions] = useState({
+    CSA: false,
+    CTPAT: false,
+    PIP: false,
+    syncToQB: false,
+    shopNotes: "",
+    remarks: ""
+  });
+
+  // Notifications Accordion
+  const [notifications, setNotifications] = useState({
+    sendPickupConfirmEmail: false,
+    sendDeliveryConfirmEmail: false,
+    sendArrivalPickupConfirmEmail: false,
+    sendArrivalDeliveryConfirmEmail: false
+  });
+
+  // Customer Information
+  const [customerInfo, setCustomerInfo] = useState({
+    currency: "",
+    creditLimit: "",
+    availableCredit: "",
+    paymentTerm: "",
+    customerType: "",
+    equipmentPreference: "",
+    preferredCustomerBroker: "",
+    factorCompany: "",
+    scaleOnSite: false,
+    alwaysAppointmentRequired: false,
+    taxApplied: false
+  });
+
+  // Billing Address (nested tab inside Customer Information)
+  const [billingAddress, setBillingAddress] = useState({
+    address1: "",
+    address2: "",
+    country: "",
+    province: "",
+    city: "",
+    postalCode: "",
+    contact: "",
     email: "",
     phone: "",
+    fax: ""
   });
-  const [isChecked, setIsChecked] = useState(false); // State to manage checkbox status
 
-  const handleTabChange = (event, newValue) => {
-    setTabIndex(newValue);
-  };
+  // Discount
+  const [discount, setDiscount] = useState({
+    discountType: "",
+    discountMode: "",
+    discountValue: ""
+  });
+
+  // Running Rights
+  const [runningRights, setRunningRights] = useState({
+    MC: "",
+    DOT: "",
+    FAST: "",
+    NIR: "",
+    WSIB: "",
+    FedID: "",
+    GST: "",
+    PST: ""
+  });
+
+  // Salesman
+  const [salesman, setSalesman] = useState({
+    commissionType: "",
+    payValue: ""
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
-  const handleCheckboxChange = (e) => {
-    setIsChecked(e.target.checked); // Update the checkbox status
-  };
-
-  const handleSubmit = () => {
-    if (isChecked) {
-      // Submit logic here
-      console.log("Form submitted:", formData);
-      handleClose(); // Close the form modal after submitting
-    } else {
-      alert("Please check the box to submit the form.");
+    // Handling changes dynamically
+    if (name.startsWith("primaryInfo")) {
+      setPrimaryInfo(prev => ({ ...prev, [name.split(".")[1]]: value }));
+    } else if (name.startsWith("options")) {
+      setOptions(prev => ({ ...prev, [name.split(".")[1]]: value }));
+    } else if (name.startsWith("notifications")) {
+      setNotifications(prev => ({ ...prev, [name.split(".")[1]]: value }));
+    } else if (name.startsWith("customerInfo")) {
+      setCustomerInfo(prev => ({ ...prev, [name.split(".")[1]]: value }));
+    } else if (name.startsWith("billingAddress")) {
+      setBillingAddress(prev => ({ ...prev, [name.split(".")[1]]: value }));
+    } else if (name.startsWith("discount")) {
+      setDiscount(prev => ({ ...prev, [name.split(".")[1]]: value }));
+    } else if (name.startsWith("runningRights")) {
+      setRunningRights(prev => ({ ...prev, [name.split(".")[1]]: value }));
+    } else if (name.startsWith("salesman")) {
+      setSalesman(prev => ({ ...prev, [name.split(".")[1]]: value }));
     }
   };
 
+  const handleSubmit = () => {
+    alert('')
+    // Consolidate the data for logging
+    const customerData = {
+      primaryInfo,
+      options,
+      notifications,
+      customerInfo,
+      billingAddress,
+      discount,
+      runningRights,
+      salesman,
+    };
+
+    console.log("Customer Data:", customerData);
+
+    // You can now send this data to your backend here
+    handleClose(); // Close the dialog after submission
+  };
+
   return (
-    <Box sx={{ width: "100%", p: 3 }}>
-      <Tabs value={tabIndex} onChange={handleTabChange}>
-        <Tab label="Primary Info" />
-        <Tab label="Customer Information" />
-        {/* Conditionally render the "Manage Contacts" tab based on isCreatingNewCustomer */}
-        {!isCreatingNewCustomer && <Tab label="Manage Contacts" />}
-      </Tabs>
+    <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth={true}>
+      <DialogTitle>Create New Customer</DialogTitle>
+      <DialogContent>
+        <Box sx={{ padding: "20px" }}>
+          <Grid container spacing={3}>
+            {/* Primary Info */}
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Customer Name"
+                variant="outlined"
+                name="primaryInfo.customerName"
+                value={primaryInfo.customerName}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Address 1"
+                variant="outlined"
+                name="primaryInfo.address1"
+                value={primaryInfo.address1}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Country"
+                variant="outlined"
+                name="primaryInfo.country"
+                value={primaryInfo.country}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
 
-      {tabIndex === 0 && <PrimaryInfo formData={formData} handleChange={handleChange} />}
-      {tabIndex === 1 && <CustomerInformation formData={formData} handleChange={handleChange} />}
-      {tabIndex === 2 && !isCreatingNewCustomer && <ManageContacts />}
+            {/* Customer Info */}
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Currency"
+                variant="outlined"
+                name="customerInfo.currency"
+                value={customerInfo.currency}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Credit Limit"
+                variant="outlined"
+                name="customerInfo.creditLimit"
+                value={customerInfo.creditLimit}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
 
-      {/* Checkbox for form submission */}
-      <CheckboxSubmit isChecked={isChecked} handleCheckboxChange={handleCheckboxChange} />
+            {/* Billing Address */}
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Billing Address"
+                variant="outlined"
+                name="billingAddress.address1"
+                value={billingAddress.address1}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
 
-      <Box mt={3} display="flex" justifyContent="center">
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
-          {isCreatingNewCustomer ? "Add Customer" : "Update Customer"}
+            {/* Salesman */}
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Salesman Commission Type"
+                variant="outlined"
+                name="salesman.commissionType"
+                value={salesman.commissionType}
+                onChange={handleChange}
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="secondary">
+          Cancel
         </Button>
-      </Box>
-    </Box>
+        <Button onClick={handleSubmit} color="primary">
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
