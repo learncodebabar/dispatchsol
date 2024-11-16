@@ -23,7 +23,7 @@ app.use("/api/customers", customerRoutes);
 
 // Default Route
 app.get("/", (req, res) => {
-  res.send("Welcome to the API");
+  res.send("Welcome t     ggfgo the API");
 });
 
 // Start the Server
