@@ -15,7 +15,7 @@ import {
    
 } from "@mui/material";
 
-
+import { addCustomer } from "../API/customerApi";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -57,8 +57,15 @@ const AddCustomerForm = () => {
     }));
   };
 
-  const handleAddCustomer = () => {
-    console.log("Form Data:", formData);
+  const handleAddCustomer = async () => {
+    try {
+      const response = await addCustomer(formData); // Using addCustomer function
+      console.log("Customer saved successfully:", response);
+      alert("Customer saved successfully!");
+    } catch (error) {
+      console.error("Error saving customer:", error);
+      alert("Error saving customer!");
+    }
   };
 
   return (

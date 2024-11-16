@@ -15,8 +15,11 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 // Main Component with Tabs for Primary Info, Customer Information, and Manage Contacts
-const EditCustomerForm = () => {
+const EditCustomerForm = ({ customerData, onClose, setData, data }) => {
   const [tabIndex, setTabIndex] = useState(0);
+
+  console.log(customerData);
+  
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
@@ -68,7 +71,7 @@ const PrimaryInfo = () => {
         </Grid>
 
         {/* Input Fields */}
-        <Grid item xs={12} md={4}> <TextField label="Customer Name" fullWidth /> </Grid>
+        <Grid item xs={12} md={4}> <TextField label="Customer Name"  fullWidth /> </Grid>
         <Grid item xs={12} md={4}> <TextField label="Address" fullWidth /></Grid>
         <Grid item xs={12} md={4}> <TextField label="Address 2" fullWidth /></Grid>
         <Grid item xs={12} md={4}> <TextField label="Country" fullWidth /></Grid>

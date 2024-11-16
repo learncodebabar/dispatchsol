@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -12,44 +11,48 @@ import {
   Dialog,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import EditCustomerForm from "./custumers/EditCustomerForm"; // Import the EditCustomerForm component
-
-const dummyData = [
-  {
-    refInfo: "REF12345",
-    name: "John Doe",
-    type: "Customer",
-    address: "123 Main St",
-    phone: "123-456-7890",
-    fax: "123-456-7891",
-    email: "johndoe@example.com",
-    extraInfo: "VIP client",
-  },
-  {
-    refInfo: "REF67890",
-    name: "Jane Smith",
-    type: "Vendor",
-    address: "456 Elm St",
-    phone: "987-654-3210",
-    fax: "987-654-3211",
-    email: "janesmith@example.com",
-    extraInfo: "Wholesale",
-  },
-];
+import EditCustomerForm from "./EditCustomerForm"; // Import your EditCustomerForm component
+import { fetchCustomers, fetchCustomerById } from "../API/customerApi"; // Import the fetchCustomerById
 
 const Content = () => {
-  const [data, setData] = useState(dummyData);
-  const [open, setOpen] = useState(false);
-  const [currentRow, setCurrentRow] = useState(null);
+  const [data, setData] = useState([]); // Table data
+  const [open, setOpen] = useState(false); // Dialog open/close state
+  const [currentRow, setCurrentRow] = useState(null); // Currently selected row
+  const [loading, setLoading] = useState(true); // Loading state for table
 
-  const handleEditClick = (row) => {
-    setCurrentRow(row);
-    setOpen(true);
+  // Fetch customer data on page load
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const customers = await fetchCustomers(); // Fetch all customers
+        setData(customers);
+      } catch (error) {
+        console.error("Failed to fetch customers:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getData();
+  }, []);
+
+  // Fetch and open customer data for editing
+  const handleEditClick = async (rowId) => {
+    try {
+      setLoading(true); // Start loading
+      const customerData = await fetchCustomerById(rowId); // Fetch data by customer ID
+      setCurrentRow(customerData); // Set the current customer data
+      setOpen(true); // Open dialog for editing
+    } catch (error) {
+      console.error("Failed to fetch customer data:", error);
+    } finally {
+      setLoading(false); // Stop loading
+    }
   };
 
   const handleClose = () => {
-    setOpen(false);
-    setCurrentRow(null);
+    setOpen(false); // Close the dialog
+    setCurrentRow(null); // Reset the customer data
   };
 
   return (
@@ -69,40 +72,53 @@ const Content = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell>{row.refInfo}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.type}</TableCell>
-              <TableCell>{row.address}</TableCell>
-              <TableCell>{row.phone}</TableCell>
-              <TableCell>{row.fax}</TableCell>
-              <TableCell>{row.email}</TableCell>
-              <TableCell>{row.extraInfo}</TableCell>
-              <TableCell>
-                <IconButton
-                  color="primary"
-                  onClick={() => handleEditClick(row)}
-                >
-                  <EditIcon />
-                </IconButton>
-                <IconButton color="secondary">
-                  <DeleteIcon />
-                </IconButton>
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={9} align="center">
+                Loading...
               </TableCell>
             </TableRow>
-          ))}
+          ) : data.length > 0 ? (
+            data.map((row) => (
+              <TableRow key={row._id}>
+                <TableCell>{row._id || "N/A"}</TableCell> {/* Customer ID */}
+                <TableCell>{row.primaryInfo?.customer_name || "N/A"}</TableCell> {/* Customer Name */}
+                <TableCell>{row.customerType?.join(", ") || "N/A"}</TableCell>
+                <TableCell>{row.primaryInfo?.address || "N/A"}</TableCell>
+                <TableCell>{row.primaryInfo?.phone || "N/A"}</TableCell>
+                <TableCell>{row.primaryInfo?.fax || "N/A"}</TableCell>
+                <TableCell>{row.primaryInfo?.email || "N/A"}</TableCell>
+                <TableCell>{row.primaryInfo?.ext || "N/A"}</TableCell>
+                <TableCell>
+                  <IconButton color="primary" onClick={() => handleEditClick(row._id)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton color="secondary">
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={9} align="center">
+                No data available
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
 
       {/* Edit Dialog */}
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
-        <EditCustomerForm
-          customerData={currentRow}
-          onClose={handleClose}
-          setData={setData}
-          data={data}
-        />
+        {currentRow && (
+          <EditCustomerForm
+            customerData={currentRow} // Pass the customer data
+            onClose={handleClose} // Close the dialog
+            setData={setData} // Update the main table data after editing
+            data={data}
+          />
+        )}
       </Dialog>
     </TableContainer>
   );
