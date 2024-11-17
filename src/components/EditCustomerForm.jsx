@@ -4,140 +4,143 @@ import {
   Grid,
   Tabs,
   Tab,
-  Checkbox,
   TextField,
+  Checkbox,
+  FormControlLabel,
+  Button,
+  Typography,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Button,
-  Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-// Main Component with Tabs for Primary Info, Customer Information, and Manage Contacts
-const EditCustomerForm = ({ customerData, onClose, setData, data }) => {
+const EditCustomerForm = ({ customerData }) => {
   const [tabIndex, setTabIndex] = useState(0);
 
-  console.log(customerData);
-  
+  const [formData, setFormData] = useState({
+    customerType: customerData?.customerType || [],
+    primaryInfo: customerData?.primaryInfo || {},
+    customerInformation: customerData?.customerInformation || {},
+    notifications: customerData?.notifications || {},
+    options: customerData?.options || {},
+  });
 
+  // Tab change handler
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
   };
 
-  const handleUpdate = () => {
-    console.log("Update clicked");
+  // Handling text field change
+  const handleFieldChange = (section, field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [section]: {
+        ...prevData[section],
+        [field]: value,
+      },
+    }));
   };
 
-  return (
-    <Box sx={{ width: "100%", p: 3 }}>
-      <Tabs value={tabIndex} onChange={handleTabChange}>
-        <Tab label="Primary Info" />
-        <Tab label="Customer Information" />
-        <Tab label="Manage Contacts" />
-      </Tabs>
+  // Handling checkbox change (for boolean fields)
+  const handleCheckboxChange = (section, field, checked) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [section]: {
+        ...prevData[section],
+        [field]: checked,
+      },
+    }));
+  };
 
-      {/* Tab Panels */}
-      {tabIndex === 0 && <PrimaryInfo />}
-      {tabIndex === 1 && <CustomerInformation />}
-      {tabIndex === 2 && <ManageContacts />}
+  // Update handler
+  const handleUpdate = () => {
+    console.log("Updated Data:", formData);
+    alert("Customer updated successfully!");
+  };
 
-      {/* Update Button with Centered Alignment and Margin */}
-      <Box mt={3} display="flex" justifyContent="center">
-        <Button variant="contained" color="primary" onClick={handleUpdate} sx={{ mt: 2 }}>
-          Update
-        </Button>
-      </Box>
-    </Box>
-  );
-};
-
-export default EditCustomerForm;
-
-// Primary Info Tab Component
-const PrimaryInfo = () => {
-  const [optionsOpen, setOptionsOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
-
-  return (
-    <Box p={3}>
-      <Typography variant="h6">Primary Info</Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Checkbox label="Customer" /> Customer
-          <Checkbox label="Location" /> Location
-          <Checkbox label="Carrier" /> Carrier
-          <Checkbox label="Leader" /> Leader
-        </Grid>
-
-        {/* Input Fields */}
-        <Grid item xs={12} md={4}> <TextField label="Customer Name"  fullWidth /> </Grid>
-        <Grid item xs={12} md={4}> <TextField label="Address" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Address 2" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Country" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Province" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="City" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Postal Code" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Legal Name" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Website" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Toll Fee" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Phone" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="EXT" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Email" fullWidth /></Grid>
-        <Grid item xs={12} md={4}> <TextField label="Fax" fullWidth /></Grid>
-      </Grid>
-
-      <Box mt={2}>
-        <Button onClick={() => setOptionsOpen(!optionsOpen)}>Options</Button>
-        <Accordion expanded={optionsOpen} onChange={() => setOptionsOpen(!optionsOpen)}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>Options</AccordionSummary>
-          <AccordionDetails>
-            <Checkbox /> CSA
-            <Checkbox /> CTPAT
-            <Checkbox /> PIP
-            <Checkbox /> Sync to QB
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}> <TextField label="Shop Notes" fullWidth multiline /> </Grid>
-              <Grid item xs={12} md={6}> <TextField label="Remarks" fullWidth multiline /> </Grid>
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
-
-        <Button onClick={() => setNotificationsOpen(!notificationsOpen)}>Notification</Button>
-        <Accordion expanded={notificationsOpen} onChange={() => setNotificationsOpen(!notificationsOpen)}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>Notification</AccordionSummary>
-          <AccordionDetails>
-            <Checkbox /> Send Pickup Confirm Email
-            <Checkbox /> Send Delivery Confirm Email
-            <Checkbox /> Send Arrival Pickup Confirm Email
-            <Checkbox /> Send Arrival at Delivery Confirm Email
-          </AccordionDetails>
-        </Accordion>
-      </Box>
-    </Box>
-  );
-};
-
-// Customer Information Tab Component
-const CustomerInformation = () => {
   return (
     <Box p={3}>
       <Typography variant="h6">Customer Information</Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={4}> <TextField label="Currency" fullWidth /> </Grid>
-        <Grid item xs={12} md={4}> <TextField label="Credit Limit" fullWidth /> </Grid>
-        <Grid item xs={12} md={4}> <TextField label="Available Credit" fullWidth /> </Grid>
-        <Grid item xs={12} md={4}> <TextField label="Payment Term" fullWidth /> </Grid>
-        <Grid item xs={12} md={4}> <TextField label="Customer Type" fullWidth /> </Grid>
-        <Grid item xs={12} md={4}> <TextField label="Equipment Preference" fullWidth /> </Grid>
-        <Grid item xs={12} md={4}> <TextField label="Factor Company" fullWidth /> </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Currency"
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Credit Limit"
+            value={creditLimit}
+            onChange={(e) => setCreditLimit(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Available Credit"
+            value={availableCredit}
+            onChange={(e) => setAvailableCredit(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Payment Term"
+            value={paymentTerm}
+            onChange={(e) => setPaymentTerm(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Customer Type"
+            value={customerType}
+            onChange={(e) => setCustomerType(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Equipment Preference"
+            value={equipmentPreference}
+            onChange={(e) => setEquipmentPreference(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Factor Company"
+            value={factorCompany}
+            onChange={(e) => setFactorCompany(e.target.value)}
+            fullWidth
+          />
+        </Grid>
         <Grid item xs={12} md={8}>
-          <Checkbox /> Scale On Site
-          <Checkbox /> Always Appointment Required
-          <Checkbox /> Tax Applied
+          <Checkbox
+            checked={scaleOnSite}
+            onChange={(e) => setScaleOnSite(e.target.checked)}
+          />
+          Scale On Site
+          <Checkbox
+            checked={appointmentRequired}
+            onChange={(e) => setAppointmentRequired(e.target.checked)}
+          />
+          Always Appointment Required
+          <Checkbox
+            checked={taxApplied}
+            onChange={(e) => setTaxApplied(e.target.checked)}
+          />
+          Tax Applied
         </Grid>
       </Grid>
-      <NestedTabs />
+      {/* Nested Tabs Section */}
+      <NestedTabs  customerData={customerData} />
+      {/* Submit Button */}
+      
     </Box>
   );
 };
@@ -156,7 +159,7 @@ const ManageContacts = () => {
 };
 
 // Nested Tabs Component
-const NestedTabs = () => {
+const NestedTabs = ({ customerData }) => {
   const [nestedTabIndex, setNestedTabIndex] = useState(0);
 
   const handleNestedTabChange = (event, newValue) => {
@@ -171,84 +174,221 @@ const NestedTabs = () => {
         <Tab label="Running Rights" />
         <Tab label="Salesman" />
       </Tabs>
-      {nestedTabIndex === 0 && <BillingAddress />}
-      {nestedTabIndex === 1 && <Discount />}
-      {nestedTabIndex === 2 && <RunningRights />}
-      {nestedTabIndex === 3 && <Salesman />}
+      {nestedTabIndex === 0 && <BillingAddress billingAddressData={customerData?.billingAddress} />}
+      {nestedTabIndex === 1 && <Discount discountData={customerData?.discount} />}
+      {nestedTabIndex === 2 && <RunningRights runningRightsData={customerData?.runningRights} />}
+      {nestedTabIndex === 3 && <Salesman salesmanData={customerData?.salesman} />}
     </Box>
   );
 };
 
 // Nested Tab Components (Billing Address, Discount, Running Rights, Salesman)
-const BillingAddress = () => (
-  <Box p={2}>
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={4}> <TextField label="Address 1" fullWidth /> </Grid>
-      <Grid item xs={12} md={4}> <TextField label="Address 2" fullWidth /> </Grid>
-      <Grid item xs={12} md={4}> <TextField label="Country" fullWidth /> </Grid>
-      <Grid item xs={12} md={4}> <TextField label="Province/State" fullWidth /> </Grid>
-      <Grid item xs={12} md={4}> <TextField label="City" fullWidth /> </Grid>
-      <Grid item xs={12} md={4}> <TextField label="Postal Code" fullWidth /> </Grid>
-      <Grid item xs={12} md={4}> <TextField label="Contact" fullWidth /> </Grid>
-      <Grid item xs={12} md={4}> <TextField label="Email" fullWidth /> </Grid>
-    </Grid>
-  </Box>
-);
+// Billing Address Tab
+// Billing Address Component
+// Billing Address Component
+const BillingAddress = ({ billingAddressData }) => {
+  const [billingname, setBilling_name] = useState(billingAddressData?.billing_name || "");
+  const [address, setAddress] = useState(billingAddressData?.billing_address || "");
+  const [country, setCountry] = useState(billingAddressData?.billing_country || "");
+  const [province, setProvince] = useState(billingAddressData?.billing_province || "");
+  const [city, setCity] = useState(billingAddressData?.billing_city || "");
+  const [postalCode, setPostalCode] = useState(billingAddressData?.postalcode || "");
+  const [contact, setContact] = useState(billingAddressData?.contact || "");
+  const [email, setEmail] = useState(billingAddressData?.email || "");
 
-const Discount = () => (
-  <Box p={2}>
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={4}>
-      <TextField label="Discount Type"  xs={12} md={4} fullWidth />
+  return (
+    <Box p={2}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Billing Name"
+            value={billingname}
+            onChange={(e) => setBilling_name(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Billing Address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Country"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Province/State"
+            value={province}
+            onChange={(e) => setProvince(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="City"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Postal Code"
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Contact"
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+          />
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={4}>
-      <TextField label="Discount Mode"  xs={12} md={4} fullWidth />
-      </Grid>
-      <Grid item xs={12} md={4}>
-      <TextField label="Discount Value"  xs={12} md={4} fullWidth />
-      </Grid>
-      
-    </Grid>
-    
-    
-    
-  </Box>
-);
+    </Box>
+  );
+};
 
-const RunningRights = () => (
-  <Box p={2}>
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={3}>
-        <TextField label="MC" fullWidth />
-      </Grid>
-      <Grid item xs={12} md={3}>
-        <TextField label="DOT" fullWidth />
-      </Grid>
-      <Grid item xs={12} md={3}>
-        <TextField label="FAST" fullWidth />
-      </Grid>
-      <Grid item xs={12} md={3}>
-        <TextField label="NIR" fullWidth />
-      </Grid>
-    </Grid>
-  </Box>
-);
+// Repeat similar patterns for other components: Discount, RunningRights, Salesman
 
-const Salesman = () => (
-  <Box p={2}>
-  <Grid container spacing={2}>
-      <Grid item xs={12} md={4}>
-        <TextField label="Salesman" fullWidth />
-      </Grid>
-      <Grid item xs={12} md={4}>
-       <TextField label="Commission Type" fullWidth />
-      </Grid>
-      <Grid item xs={12} md={4}>
-      <TextField label="Pay Value" fullWidth />
-      </Grid>
-      
-    </Grid>
 
-  </Box>
-);
+const Discount = ({ discountData }) => {
+  const [discountType, setDiscountType] = useState(discountData?.discountType || "");
+  const [discountMode, setDiscountMode] = useState(discountData?.DiscountMode || "");
+  const [discountValue, setDiscountValue] = useState(discountData?.discountValue || "");
 
+  return (
+    <Box p={2}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Discount Type"
+            value={discountType}
+            onChange={(e) => setDiscountType(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Discount Mode"
+            value={discountMode}
+            onChange={(e) => setDiscountMode(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Discount Value"
+            value={discountValue}
+            onChange={(e) => setDiscountValue(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+const RunningRights = ({ runningRightsData }) => {
+  const [mc, setMc] = useState(runningRightsData?.mc || "");
+  const [dot, setDot] = useState(runningRightsData?.dot || "");
+  const [fast, setFast] = useState(runningRightsData?.fast || "");
+  const [nir, setNir] = useState(runningRightsData?.nir || "");
+
+  return (
+    <Box p={2}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="MC"
+            value={mc}
+            onChange={(e) => setMc(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="DOT"
+            value={dot}
+            onChange={(e) => setDot(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="FAST"
+            value={fast}
+            onChange={(e) => setFast(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="NIR"
+            value={nir}
+            onChange={(e) => setNir(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+
+const Salesman = ({ salesmanData }) => {
+  const [salesman, setSalesman] = useState(salesmanData?.Salesman || "");
+  const [commissionType, setCommissionType] = useState(salesmanData?.CommissionType || "");
+  const [payValue, setPayValue] = useState(salesmanData?.PayValue || "");
+
+  return (
+    <Box p={2}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Salesman"
+            value={salesman}
+            onChange={(e) => setSalesman(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Commission Type"
+            value={commissionType}
+            onChange={(e) => setCommissionType(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <TextField
+            label="Pay Value"
+            value={payValue}
+            onChange={(e) => setPayValue(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+      </Grid>
+    </Box>
+  );
+}
+export default EditCustomerForm;

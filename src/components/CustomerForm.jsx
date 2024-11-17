@@ -109,13 +109,17 @@ const PrimaryInfo = ({ formData, handleFieldChange, handleCheckboxChange }) => {
             key={label}
             control={
               <Checkbox
-                checked={formData.customerType.includes(label)}
-                onChange={() => handleCheckboxChange("customerType", label)}
+                checked={formData.customerType[label] || false}
+                onChange={() => handleFieldChange("customerType", label, !formData.customerType[label])}
               />
             }
             label={label} // This adds the label to the checkbox
           />
         ))}
+
+
+
+
         </Grid>
 
         {/* Input Fields */}
@@ -180,13 +184,13 @@ const PrimaryInfo = ({ formData, handleFieldChange, handleCheckboxChange }) => {
           <Accordion expanded={notificationsOpen} onChange={() => setNotificationsOpen(!notificationsOpen)}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>Notification</AccordionSummary>
             <AccordionDetails>
-            {["Send Pickup Confirm Email", "Send Delivery Confirm Email", "Send Arrival Pickup Confirm Email", "Send Arrival at Delivery Confirm Email"].map((label) => (
+            {["SendPickupConfirmEmail", "SendDeliveryConfirmEmail", "SendArrivalPickupConfirmEmail", "SendArrivalatDeliveryConfirmEmail"].map((label) => (
               <FormControlLabel
                 key={label}
                 control={
                   <Checkbox
                     checked={formData.notifications[label] || false}
-                    onChange={() => handleFieldChange("notifications", label, !formData.notifications[label])}
+                    onChange={() => handleFieldChange("notifications", label, !formData.notifications["sendDeliveryConfirmEmail","sendPickUPConfirmEmail","sendArrivalPickupConfirmEmail","sendArrivalDeliveryConfirmEmail"])}
                   />
                 }
                 label={label} // Adds the label next to the checkbox
@@ -216,8 +220,59 @@ const CustomerInformation = ({ formData, handleFieldChange }) => (
             value={formData.customerInformation[label.replace(" ", "_").toLowerCase()] || ""}
             onChange={(e) => handleFieldChange("customerInformation", label.replace(" ", "_").toLowerCase(), e.target.value)}
           />
+
         </Grid>
       ))}
+      
+      <Grid item xs={12} md={8}>
+  <FormControlLabel
+    control={
+      <Checkbox
+        checked={formData.customerInformation.scaleOnSite || false}
+        onChange={(e) =>
+          handleFieldChange(
+            "customerInformation",
+            "scaleOnSite",
+            e.target.checked
+          )
+        }
+      />
+    }
+    label="Scale On Site"
+  />
+  <FormControlLabel
+    control={
+      <Checkbox
+        checked={formData.customerInformation.alwaysAppointmentRequired || false}
+        onChange={(e) =>
+          handleFieldChange(
+            "customerInformation",
+            "alwaysAppointmentRequired",
+            e.target.checked
+          )
+        }
+      />
+    }
+    label="Always Appointment Required"
+  />
+  <FormControlLabel
+    control={
+      <Checkbox
+        checked={formData.customerInformation.taxApplied || false}
+        onChange={(e) =>
+          handleFieldChange(
+            "customerInformation",
+            "taxApplied",
+            e.target.checked
+          )
+        }
+      />
+    }
+    label="Tax Applied"
+  />
+</Grid>
+
+      
 
       <NestedTabs formData={formData} handleFieldChange={handleFieldChange} />
     </Grid>
@@ -253,7 +308,7 @@ const BillingAddress = ({ formData, handleFieldChange }) => (
     <Typography variant="h6">Billing Address</Typography>
     <Grid container spacing={2}>
       {[
-        "Billing Name", "Billing Address", "Billing Country", "Billing Province", "Billing City", "Billing Postal Code",
+        "Billing Name", "Billing Address", "Billing Country", "Billing Province", "Billing City", "PostalCode","Contact","Email"
       ].map((label) => (
         <Grid item xs={12} md={4} key={label}>
           <TextField
@@ -283,6 +338,14 @@ const Discount = ({ formData, handleFieldChange }) => (
       </Grid>
       <Grid item xs={12} md={4}>
         <TextField
+          label="Discount Mode"
+          fullWidth
+          value={formData.discount.DiscountMode || ""}
+          onChange={(e) => handleFieldChange("discount", "DiscountMode", e.target.value)}
+        />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <TextField
           label="Discount Value"
           fullWidth
           value={formData.discount.discountValue || ""}
@@ -298,7 +361,7 @@ const RunningRights = ({ formData, handleFieldChange }) => (
   <Box p={2}>
     <Typography variant="h6">Running Rights</Typography>
     <Grid container spacing={2}>
-      {["Driver", "Owner", "Fleet"].map((label) => (
+      {["MC", "DOT", "FAST","NIR"].map((label) => (
         <Grid item xs={12} md={4} key={label}>
           <TextField
             label={label}
@@ -319,18 +382,26 @@ const Salesman = ({ formData, handleFieldChange }) => (
     <Grid container spacing={2}>
       <Grid item xs={12} md={4}>
         <TextField
-          label="Salesman Name"
+          label="Salesman"
           fullWidth
-          value={formData.salesman.salesmanName || ""}
-          onChange={(e) => handleFieldChange("salesman", "salesmanName", e.target.value)}
+          value={formData.salesman.Salesman || ""}
+          onChange={(e) => handleFieldChange("salesman", "Salesman", e.target.value)}
         />
       </Grid>
       <Grid item xs={12} md={4}>
         <TextField
-          label="Salesman Email"
+          label="Commission Type"
           fullWidth
-          value={formData.salesman.salesmanEmail || ""}
-          onChange={(e) => handleFieldChange("salesman", "salesmanEmail", e.target.value)}
+          value={formData.salesman.CommissionType || ""}
+          onChange={(e) => handleFieldChange("salesman", "CommissionType", e.target.value)}
+        />
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <TextField
+          label="Pay Value"
+          fullWidth
+          value={formData.salesman.PayValue || ""}
+          onChange={(e) => handleFieldChange("salesman", "PayValue", e.target.value)}
         />
       </Grid>
     </Grid>

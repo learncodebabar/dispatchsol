@@ -29,3 +29,23 @@ export const addCustomer = async (customerData) => {
     throw error;
   }
 };
+
+// Update a customer by ID
+export const updateCustomer = async (id, updatedData) => {
+  try {
+    const response = await API.put(`/customers/${id}`, updatedData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Delete a customer by ID
+export const deleteCustomer = async (id) => {
+  try {
+    const response = await API.delete(`/customers/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

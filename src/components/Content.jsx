@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import EditCustomerForm from "./EditCustomerForm"; // Import your EditCustomerForm component
-import { fetchCustomers, fetchCustomerById } from "../API/customerApi"; // Import the fetchCustomerById
+import { fetchCustomers, fetchCustomerById, deleteCustomer } from "../API/customerApi"; // Added deleteCustomer
 
 const Content = () => {
   const [data, setData] = useState([]); // Table data
@@ -50,6 +50,16 @@ const Content = () => {
     }
   };
 
+  // Handle delete customer
+  const handleDeleteClick = async (rowId) => {
+    try {
+      await deleteCustomer(rowId); // Call API to delete customer
+      setData((prevData) => prevData.filter((customer) => customer._id !== rowId)); // Update the table data
+    } catch (error) {
+      console.error("Failed to delete customer:", error);
+    }
+  };
+
   const handleClose = () => {
     setOpen(false); // Close the dialog
     setCurrentRow(null); // Reset the customer data
@@ -83,7 +93,6 @@ const Content = () => {
               <TableRow key={row._id}>
                 <TableCell>{row._id || "N/A"}</TableCell> {/* Customer ID */}
                 <TableCell>{row.primaryInfo?.customer_name || "N/A"}</TableCell> {/* Customer Name */}
-                <TableCell>{row.customerType?.join(", ") || "N/A"}</TableCell>
                 <TableCell>{row.primaryInfo?.address || "N/A"}</TableCell>
                 <TableCell>{row.primaryInfo?.phone || "N/A"}</TableCell>
                 <TableCell>{row.primaryInfo?.fax || "N/A"}</TableCell>
@@ -93,7 +102,7 @@ const Content = () => {
                   <IconButton color="primary" onClick={() => handleEditClick(row._id)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="secondary">
+                  <IconButton color="secondary" onClick={() => handleDeleteClick(row._id)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>

@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // Replace with your API base URL
+  baseURL: "https://rt69tz-5000.csb.app/api", // Replace with your API base URL
 });
-
 // Add interceptors for handling requests and responses
 API.interceptors.request.use(
   (config) => {
