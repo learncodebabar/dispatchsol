@@ -1,4 +1,3 @@
-// Dashboard.js
 import React, { useState } from "react";
 import {
   Box,
@@ -8,7 +7,6 @@ import {
   Typography,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
 } from "@mui/material";
@@ -16,26 +14,31 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Content from "./Content"; // Main content component
 import Sidebar from "./Sidebar"; // Sidebar Component
-import AddCustomerForm from "./CustomerForm"; // Customer form component
+import AddCustomerForm from "./custumers/CustomerForm"; // Customer form component
 import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark mode icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light mode icon
+import OrderForm from "./order/Order";
 
 const Dashboard = ({ darkMode, toggleTheme }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Initially closed
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isCreatingNewCustomer, setIsCreatingNewCustomer] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-  const handleSidebarToggle = () => {
-    setIsSidebarOpen(!isSidebarOpen);
+  const handleSidebarToggle = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setIsSidebarOpen(open);
   };
 
-  const handleOpenForm = () => {
-    setIsCreatingNewCustomer(true);
+  const handleOpenForm = (customer = null) => {
+    setSelectedCustomer(customer);
     setIsFormOpen(true);
   };
 
   const handleCloseForm = () => {
     setIsFormOpen(false);
+    setSelectedCustomer(null);
   };
 
   return (
@@ -46,7 +49,7 @@ const Dashboard = ({ darkMode, toggleTheme }) => {
             <IconButton
               color="inherit"
               edge="start"
-              onClick={handleSidebarToggle}
+              onClick={handleSidebarToggle(true)}
               sx={{ mr: 2 }}
             >
               <MenuIcon />
@@ -58,7 +61,7 @@ const Dashboard = ({ darkMode, toggleTheme }) => {
             <IconButton onClick={toggleTheme} color="inherit">
               {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
-            <Button color="inherit" variant="outlined" onClick={handleOpenForm}>
+            <Button color="inherit" variant="outlined" onClick={() => handleOpenForm()}>
               Create New Customer
             </Button>
           </Toolbar>
@@ -80,24 +83,17 @@ const Dashboard = ({ darkMode, toggleTheme }) => {
         >
           <Toolbar />
           <Routes>
-            <Route path="/" element={<Content />} />
-            <Route path="/customers" element={<Content />} />
+            <Route path="/" element={<Content onEditCustomer={handleOpenForm} />} />
+            <Route path="/customers" element={<Content onEditCustomer={handleOpenForm} />} />
+            <Route path="/order" element={< OrderForm />} />
           </Routes>
         </Box>
 
         <Dialog open={isFormOpen} onClose={handleCloseForm} fullWidth maxWidth="md">
-          <DialogTitle>{isCreatingNewCustomer ? "Create New Customer" : "Edit Customer"}</DialogTitle>
+          <DialogTitle>{selectedCustomer ? "Edit Customer" : "Create New Customer"}</DialogTitle>
           <DialogContent>
-            <AddCustomerForm handleClose={handleCloseForm} isCreatingNewCustomer={isCreatingNewCustomer} />
+            <AddCustomerForm handleClose={handleCloseForm} isCreatingNewCustomer={!selectedCustomer} />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseForm} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleCloseForm} color="primary">
-              Submit
-            </Button>
-          </DialogActions>
         </Dialog>
       </Box>
     </Router>

@@ -38,7 +38,18 @@ router.get("/", async (req, res) => {
     }
   });
 
+// In your Express backend (e.g., server.js)
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedCustomer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedCustomer);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+// In your Express backend (e.g., server.js)
 
+// In your Express backend (e.g., server.js)
 
 
 // Default Route for Testing

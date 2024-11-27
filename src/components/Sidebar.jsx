@@ -1,23 +1,14 @@
-import React, { useState } from 'react';
-import { Box, Button, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import React from 'react';
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 
-const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-
-    setIsSidebarOpen(open);
-  };
+const Sidebar = ({ isSidebarOpen, handleSidebarToggle }) => {
 
   const list = () => (
     <Box
       sx={{ width: 250 }}
       role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
+      onClick={handleSidebarToggle(false)}
+      onKeyDown={handleSidebarToggle(false)}
     >
       <List>
         {['Dashboard', 'Customers', 'Products'].map((item, index) => (
@@ -32,16 +23,13 @@ const Sidebar = () => {
   );
 
   return (
-    <div>
-      <Button onClick={toggleDrawer(true)}>Toggle Sidebar</Button>
-      <Drawer
-        anchor="left"
-        open={isSidebarOpen}
-        onClose={toggleDrawer(false)}
-      >
-        {list()}
-      </Drawer>
-    </div>
+    <Drawer
+      anchor="left"
+      open={isSidebarOpen}
+      onClose={handleSidebarToggle(false)}
+    >
+      {list()}
+    </Drawer>
   );
 };
 

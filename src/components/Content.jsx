@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,8 +11,8 @@ import {
   Dialog,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import EditCustomerForm from "./EditCustomerForm"; // Import your EditCustomerForm component
-import { fetchCustomers, fetchCustomerById, deleteCustomer } from "../API/customerApi"; // Added deleteCustomer
+import EditCustomerForm from "./custumers/EditCustomerForm"; // Import your EditCustomerForm component
+import { fetchCustomers, deleteCustomer,fetchCustomerById } from "../API/customerApi"; // Added deleteCustomer
 
 const Content = () => {
   const [data, setData] = useState([]); // Table data
@@ -20,7 +20,6 @@ const Content = () => {
   const [currentRow, setCurrentRow] = useState(null); // Currently selected row
   const [loading, setLoading] = useState(true); // Loading state for table
 
-  // Fetch customer data on page load
   useEffect(() => {
     const getData = async () => {
       try {
@@ -36,33 +35,31 @@ const Content = () => {
     getData();
   }, []);
 
-  // Fetch and open customer data for editing
   const handleEditClick = async (rowId) => {
     try {
-      setLoading(true); // Start loading
-      const customerData = await fetchCustomerById(rowId); // Fetch data by customer ID
-      setCurrentRow(customerData); // Set the current customer data
-      setOpen(true); // Open dialog for editing
+      setLoading(true);
+      const customerData = await fetchCustomerById(rowId); // Fetch customer data by ID
+      setCurrentRow(customerData);
+      setOpen(true);
     } catch (error) {
       console.error("Failed to fetch customer data:", error);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
-  // Handle delete customer
   const handleDeleteClick = async (rowId) => {
     try {
-      await deleteCustomer(rowId); // Call API to delete customer
-      setData((prevData) => prevData.filter((customer) => customer._id !== rowId)); // Update the table data
+      await deleteCustomer(rowId); // Delete customer by ID
+      setData((prevData) => prevData.filter((customer) => customer._id !== rowId));
     } catch (error) {
       console.error("Failed to delete customer:", error);
     }
   };
 
   const handleClose = () => {
-    setOpen(false); // Close the dialog
-    setCurrentRow(null); // Reset the customer data
+    setOpen(false);
+    setCurrentRow(null);
   };
 
   return (
