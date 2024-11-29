@@ -8,13 +8,182 @@ import {
   FormControlLabel,
   RadioGroup,
   Radio,
-  Tab,
-  Tabs,
-  Select,
-  MenuItem,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Button,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CustomerList from "./CustomerList";
 
+const CustomerForm = ({ formData, handleInputChange, handleNestedInputChange, setShowCustomerList }) => (
+  <Box>
+    <Typography variant="h6" gutterBottom color="primary">
+      Customer
+    </Typography>
+    <Grid container spacing={2}>
+      <Grid item xs={12} sm={6} sx={{ display: "flex", alignItems: "center" }}>
+        <TextField
+          fullWidth
+          label="Customer Name"
+          value={formData.customer.customerName}
+          onChange={(e) =>
+            handleInputChange("customer", "customerName", e.target.value)
+          }
+        />
+        <Button
+          sx={{ marginLeft: "10px", bgcolor: "primary.main", color: "white" }}
+          variant="contained"
+          onClick={() => setShowCustomerList(true)}
+        >
+          +
+        </Button>
+      </Grid>
+
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="Customer Order No"
+          value={formData.customer.customerOrderNo}
+          onChange={(e) =>
+            handleInputChange("customer", "customerOrderNo", e.target.value)
+          }
+        />
+      </Grid>
+
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          type="date"
+          label="Date"
+          InputLabelProps={{ shrink: true }}
+          value={formData.customer.date}
+          onChange={(e) =>
+            handleInputChange("customer", "date", e.target.value)
+          }
+        />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={formData.customer.switchValue}
+              onChange={(e) =>
+                handleInputChange("customer", "switchValue", e.target.checked)
+              }
+              sx={{ "& .MuiSwitch-track": { bgcolor: "primary.main" } }}
+            />
+          }
+          label="Switch"
+        />
+      </Grid>
+
+      <Grid item xs={12}>
+        <Typography color="primary">Load Directions</Typography>
+        <RadioGroup
+          row
+          value={formData.customer.loadDirection}
+          onChange={(e) =>
+            handleInputChange("customer", "loadDirection", e.target.value)
+          }
+        >
+          {[
+            "Outbound US",
+            "Inbound Canada",
+            "City",
+            "In Province",
+            "In Canada",
+          ].map((option) => (
+            <FormControlLabel
+              key={option}
+              value={option}
+              control={<Radio sx={{ color: "primary.main" }} />}
+              label={option}
+            />
+          ))}
+        </RadioGroup>
+      </Grid>
+
+      <Grid item xs={12} sm={6}>
+        <Typography variant="subtitle1" color="secondary">Additional Info</Typography>
+        <TextField
+          fullWidth
+          label="Scale Ticket"
+          value={formData.customer.additionalInfo.scaleTicket}
+          onChange={(e) =>
+            handleNestedInputChange(
+              "customer",
+              "additionalInfo",
+              "scaleTicket",
+              e.target.value
+            )
+          }
+          sx={{ mt: 1 }}
+        />
+        <TextField
+          fullWidth
+          label="Scale Ticket Location"
+          value={formData.customer.additionalInfo.scaleTicketLocation}
+          onChange={(e) =>
+            handleNestedInputChange(
+              "customer",
+              "additionalInfo",
+              "scaleTicketLocation",
+              e.target.value
+            )
+          }
+          sx={{ mt: 1 }}
+        />
+      </Grid>
+
+      <Grid item xs={12} sm={6}>
+        <Typography variant="subtitle1" color="secondary">Cross Border</Typography>
+        <TextField
+          fullWidth
+          label="Trip Type"
+          value={formData.customer.crossBorder.tripType}
+          onChange={(e) =>
+            handleNestedInputChange(
+              "customer",
+              "crossBorder",
+              "tripType",
+              e.target.value
+            )
+          }
+          sx={{ mt: 1 }}
+        />
+        <TextField
+          fullWidth
+          label="SCAC Canada"
+          value={formData.customer.crossBorder.scacCanada}
+          onChange={(e) =>
+            handleNestedInputChange(
+              "customer",
+              "crossBorder",
+              "scacCanada",
+              e.target.value
+            )
+          }
+          sx={{ mt: 1 }}
+        />
+        <TextField
+          fullWidth
+          label="POE US/Canada"
+          value={formData.customer.crossBorder.poeUsCanada}
+          onChange={(e) =>
+            handleNestedInputChange(
+              "customer",
+              "crossBorder",
+              "poeUsCanada",
+              e.target.value
+            )
+          }
+          sx={{ mt: 1 }}
+        />
+      </Grid>
+    </Grid>
+  </Box>
+);
 const OrderForm = () => {
   const [formData, setFormData] = useState({
     customer: {
@@ -23,10 +192,6 @@ const OrderForm = () => {
       date: "",
       switchValue: false,
       loadDirection: "",
-      salesman: "",
-      commission: "",
-      emailForNotification: "",
-      orderNotes: "",
       additionalInfo: {
         scaleTicket: "",
         scaleTicketLocation: "",
@@ -39,7 +204,12 @@ const OrderForm = () => {
     },
   });
 
-  const [tabIndex, setTabIndex] = useState(0);
+  const [showCustomerList, setShowCustomerList] = useState(false);
+  const [expanded, setExpanded] = useState("customer");
+
+  const handleAccordionChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
 
   const handleInputChange = (section, field, value) => {
     setFormData((prevState) => ({
@@ -51,259 +221,82 @@ const OrderForm = () => {
     }));
   };
 
-  const handleNestedInputChange = (section, nestedField, field, value) => {
+  const handleNestedInputChange = (section, nestedSection, field, value) => {
     setFormData((prevState) => ({
       ...prevState,
       [section]: {
         ...prevState[section],
-        [nestedField]: {
-          ...prevState[section][nestedField],
+        [nestedSection]: {
+          ...prevState[section][nestedSection],
           [field]: value,
         },
       },
     }));
   };
 
-  const handleSubmit = () => {
-    console.log(formData);
-    alert("Form submitted!");
+  const handleCustomerSelect = (customerName) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      customer: {
+        ...prevState.customer,
+        customerName: customerName,
+      },
+    }));
+    setShowCustomerList(false);
   };
+
+  const handleSubmit = () => {
+    console.log("Form Data:", formData);
+  };
+
+  if (showCustomerList) {
+    return <CustomerList onSelectCustomer={handleCustomerSelect} />;
+  }
 
   return (
     <Box sx={{ padding: "20px", width: "100%", maxWidth: "100%" }}>
-      {/* Tabs Navigation */}
-      <Tabs
-        value={tabIndex}
-        onChange={(e, newValue) => setTabIndex(newValue)}
-        textColor="primary"
-        indicatorColor="primary"
-        variant="fullWidth"
-      >
-        <Tab label="Customer" />
-        <Tab label="Revenue" />
-        <Tab label="Shipments" />
-      </Tabs>
+      <Accordion expanded={expanded === "customer"} onChange={handleAccordionChange("customer")}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography color="primary">Customer</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <CustomerForm
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleNestedInputChange={handleNestedInputChange}
+            setShowCustomerList={setShowCustomerList}
+          />
+        </AccordionDetails>
+      </Accordion>
 
-      {/* Tab Panels */}
-      {tabIndex === 0 && (
-        <Box sx={{ padding: "20px" }}>
-          <Typography variant="h6" gutterBottom>
-            Customer
-          </Typography>
-          <Grid container spacing={2}>
-            {/* First Row */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Customer Name"
-                value={formData.customer.customerName}
-                onChange={(e) =>
-                  handleInputChange("customer", "customerName", e.target.value)
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Customer Order No"
-                value={formData.customer.customerOrderNo}
-                onChange={(e) =>
-                  handleInputChange("customer", "customerOrderNo", e.target.value)
-                }
-              />
-            </Grid>
+      <Accordion expanded={expanded === "revenue"} onChange={handleAccordionChange("revenue")}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography color="primary">Revenue</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box>
+            <Typography variant="h4" color="primary">
+              Revenue Inputs Here
+            </Typography>
+          </Box>
+        </AccordionDetails>
+      </Accordion>
 
-            {/* Second Row */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                type="date"
-                label="Date"
-                InputLabelProps={{ shrink: true }}
-                value={formData.customer.date}
-                onChange={(e) =>
-                  handleInputChange("customer", "date", e.target.value)
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={formData.customer.switchValue}
-                    onChange={(e) =>
-                      handleInputChange("customer", "switchValue", e.target.checked)
-                    }
-                  />
-                }
-                label="Switch"
-              />
-            </Grid>
+      <Accordion expanded={expanded === "shipments"} onChange={handleAccordionChange("shipments")}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography color="primary">Shipments</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box>
+            <Typography variant="h4" color="primary">
+              Shipment Inputs Here
+            </Typography>
+          </Box>
+        </AccordionDetails>
+      </Accordion>
 
-            {/* Third Row */}
-            <Grid item xs={12}>
-              <Typography>Load Directions</Typography>
-              <RadioGroup
-                row
-                value={formData.customer.loadDirection}
-                onChange={(e) =>
-                  handleInputChange("customer", "loadDirection", e.target.value)
-                }
-              >
-                {[
-                  "Outbound US",
-                  "Inbound Canada",
-                  "City",
-                  "In Province",
-                  "In Canada",
-                ].map((option) => (
-                  <FormControlLabel
-                    key={option}
-                    value={option}
-                    control={<Radio />}
-                    label={option}
-                  />
-                ))}
-              </RadioGroup>
-            </Grid>
-
-            {/* Fourth Row */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Salesman"
-                value={formData.customer.salesman}
-                onChange={(e) =>
-                  handleInputChange("customer", "salesman", e.target.value)
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Commission"
-                value={formData.customer.commission}
-                onChange={(e) =>
-                  handleInputChange("customer", "commission", e.target.value)
-                }
-              />
-            </Grid>
-
-            {/* Fifth Row */}
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Email for Notification"
-                value={formData.customer.emailForNotification}
-                onChange={(e) =>
-                  handleInputChange("customer", "emailForNotification", e.target.value)
-                }
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                multiline
-                rows={3}
-                label="Order Notes"
-                value={formData.customer.orderNotes}
-                onChange={(e) =>
-                  handleInputChange("customer", "orderNotes", e.target.value)
-                }
-              />
-            </Grid>
-
-            {/* Sixth Row: Additional Info */}
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle1">Additional Info</Typography>
-              <TextField
-                fullWidth
-                label="Scale Ticket"
-                value={formData.customer.additionalInfo.scaleTicket}
-                onChange={(e) =>
-                  handleNestedInputChange(
-                    "customer",
-                    "additionalInfo",
-                    "scaleTicket",
-                    e.target.value
-                  )
-                }
-              />
-              <TextField
-                fullWidth
-                label="Scale Ticket Location"
-                value={formData.customer.additionalInfo.scaleTicketLocation}
-                onChange={(e) =>
-                  handleNestedInputChange(
-                    "customer",
-                    "additionalInfo",
-                    "scaleTicketLocation",
-                    e.target.value
-                  )
-                }
-              />
-            </Grid>
-
-            {/* Seventh Row: Cross Border */}
-            <Grid item xs={12} sm={6}>
-              <Typography variant="subtitle1">Cross Border</Typography>
-              <TextField
-                fullWidth
-                label="Trip Type"
-                value={formData.customer.crossBorder.tripType}
-                onChange={(e) =>
-                  handleNestedInputChange(
-                    "customer",
-                    "crossBorder",
-                    "tripType",
-                    e.target.value
-                  )
-                }
-              />
-              <TextField
-                fullWidth
-                label="SCAC Canada"
-                value={formData.customer.crossBorder.scacCanada}
-                onChange={(e) =>
-                  handleNestedInputChange(
-                    "customer",
-                    "crossBorder",
-                    "scacCanada",
-                    e.target.value
-                  )
-                }
-              />
-              <TextField
-                fullWidth
-                label="POE US/Canada"
-                value={formData.customer.crossBorder.poeUsCanada}
-                onChange={(e) =>
-                  handleNestedInputChange(
-                    "customer",
-                    "crossBorder",
-                    "poeUsCanada",
-                    e.target.value
-                  )
-                }
-              />
-            </Grid>
-          </Grid>
-        </Box>
-      )}
-      {tabIndex === 1 && (
-        <Box sx={{ padding: "20px", width: "100%" }}>
-          <Typography variant="h1">Revenue</Typography>
-        </Box>
-      )}
-      {tabIndex === 2 && (
-        <Box sx={{ padding: "20px", width: "100%" }}>
-          <Typography variant="h3">Shipments</Typography>
-        </Box>
-      )}
-
-      {/* Submit Button */}
       <Box sx={{ marginTop: "20px", textAlign: "right", width: "100%" }}>
-        <Button variant="contained" fullWidth onClick={handleSubmit}>
+        <Button variant="contained" sx={{ bgcolor: "primary.main", color: "white" }} fullWidth onClick={handleSubmit}>
           Submit
         </Button>
       </Box>
@@ -312,3 +305,4 @@ const OrderForm = () => {
 };
 
 export default OrderForm;
+

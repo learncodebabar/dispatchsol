@@ -1,7 +1,14 @@
 import React from 'react';
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const Sidebar = ({ isSidebarOpen, handleSidebarToggle }) => {
+  const menuItems = [
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Customers', path: '/customers' },
+    { name: 'Products', path: '/products' },
+    { name: 'Order', path: '/order' },
+  ];
 
   const list = () => (
     <Box
@@ -11,10 +18,10 @@ const Sidebar = ({ isSidebarOpen, handleSidebarToggle }) => {
       onKeyDown={handleSidebarToggle(false)}
     >
       <List>
-        {['Dashboard', 'Customers', 'Products'].map((item, index) => (
+        {menuItems.map((item, index) => (
           <ListItem key={index} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={item} />
+            <ListItemButton component={Link} to={item.path}>
+              <ListItemText primary={item.name} />
             </ListItemButton>
           </ListItem>
         ))}
